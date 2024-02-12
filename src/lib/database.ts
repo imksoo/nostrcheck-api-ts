@@ -413,9 +413,8 @@ async function dbSelectUsername(pubkey: string): Promise<string> {
 		const rowstemp = JSON.parse(JSON.stringify(dbResult));
 		dbPubkey.end();
 		if (rowstemp[0] == undefined) {
-			return "";	
+			return pubkey;
 		}else{
-
 			return rowstemp[0]['username'];
 		}
 	}catch (error) {
