@@ -31,6 +31,9 @@ services:
       - "traefik.http.middlewares.replacepathregex-media.replacepathregex.regex=^/media/(.*)"
       - "traefik.http.middlewares.replacepathregex-media.replacepathregex.replacement=/api/v2/media/$$1"
       - "traefik.http.routers.app-media.service=app"
+      # /.well-known/nostr.json -> /api/v2/nostraddress
+      - "traefik.http.routers.app.rule=PathPrefix(`/`)"
+      - "traefik.http.routers.app.service=app"
   mariadb:
     image: mariadb:10
     ports:
