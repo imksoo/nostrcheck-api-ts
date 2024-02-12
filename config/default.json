@@ -7,7 +7,7 @@
     "logoFilePath" : "resources/logo-server.webp"
   },
   "database": {
-    "host": "127.0.0.1",
+    "host": "mariadb",
     "user": "nostrcheck",
     "password": "nostrcheck",
     "database": "nostrcheck",
