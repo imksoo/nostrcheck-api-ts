@@ -12,6 +12,7 @@ services:
     ports:
       - "3000:3000"
     volumes:
+      - ./config:/usr/src/app/config
       - ./tmp:/usr/src/app/tmp
       - media:/usr/src/app/media
       - ./resources:/usr/src/app/resources
@@ -87,6 +88,7 @@ services:
       - "--providers.docker.exposedbydefault=false"
       - "--api.dashboard=true" 
     ports:
+      - "80:80"
       - "8081:8080"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
