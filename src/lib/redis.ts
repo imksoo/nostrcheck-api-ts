@@ -6,11 +6,11 @@ import { RegisteredUsernameResult } from "../interfaces/register.js";
 import { LightningUsernameResult } from "../interfaces/lightning.js";
 
 //Redis configuration
-const RedisHost: string = config.get('redis.host');
-const RedisPort: string = config.get('redis.port');
-const RedisUser: string = config.get('redis.user');
-const RedisPassword: string = config.get('redis.password');
-const redisClient = createClient({ url: `redis://${RedisUser}:${RedisPassword}@${RedisHost}:${RedisPort}` });
+const redisHost: string = config.get('redis.host');
+const redisPort: string = config.get('redis.port');
+const redisUser: string = config.get('redis.user');
+const redisPassword: string = config.get('redis.password');
+const redisClient = createClient({ url: `redis://${redisUser}:${redisPassword}@${redisHost}:${redisPort}` });
 (async (): Promise<void> => {
 	redisClient.on("error", (error: any) =>{
 		logger.error(`There is a problem connecting to redis server, is redis-server package installed on your system? : ${error}`);
