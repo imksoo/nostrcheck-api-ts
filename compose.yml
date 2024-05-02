@@ -10,10 +10,10 @@ services:
       - mariadb
       - redis
     volumes:
+      - media:/usr/src/app/media
+      - ./resources:/usr/src/app/resources
       - ./config:/usr/src/app/config
       - ./tmp:/usr/src/app/tmp
-      - ./resources:/usr/src/app/resources
-      - media:/usr/src/app/media
     restart: always
     environment: 
       DATABASE_HOST: "mariadb"

@@ -15,7 +15,7 @@ const redisClient = createClient({ url: `redis://${redisUser}:${redisPassword}@$
 	redisClient.on("error", (error: Error) =>{
 		logger.error(`There is a problem connecting to redis server, is redis-server package installed on your system? : ${error}`);
 		process.exit(1);
-	});
+  });
 	await redisClient.connect();
 })();
 
