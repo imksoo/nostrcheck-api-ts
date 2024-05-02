@@ -3,6 +3,9 @@
 <img src= "https://github.com/quentintaranpino/nostrcheck-api-ts/assets/125748180/b4a7a4c3-938f-4f60-af81-3af4e5178ec4">
 </p>
 
+## Powered by
+![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white) ![NodeJS](https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white) ![MariaDB](https://img.shields.io/badge/MariaDB-003545?style=for-the-badge&logo=mariadb&logoColor=white) ![Redis](https://img.shields.io/badge/redis-%23DD0031.svg?style=for-the-badge&logo=redis&logoColor=white) ![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white) ![Nginx](https://img.shields.io/badge/nginx-%23009639.svg?style=for-the-badge&logo=nginx&logoColor=white) ![Ffmpeg](https://img.shields.io/badge/ffmpeg-74aa9c?style=for-the-badge&logo=ffmpeg&logoColor=white&logoWidth=25) ![nostr-tools](https://img.shields.io/badge/nostr%7Ctools-9932cc?style=for-the-badge&logo=toml&logoColor=white)
+
 ## About
 Nostrcheck server is a set of tools to interact with nostr and be sovereign of your data. 
 
@@ -22,21 +25,30 @@ In either case, all parameters can be modified using the settings page in the se
 To make a standalone installation you can use the following script. You can find the code [here](https://github.com/quentintaranpino/nostrcheck-api-ts/blob/main/scripts/install.sh)
 
 ```
-curl https://raw.githubusercontent.com/quentintaranpino/nostrcheck-api-ts/0.5.0/scripts/install.sh --output install.sh && chmod +x install.sh && ./install.sh
+curl https://raw.githubusercontent.com/quentintaranpino/nostrcheck-api-ts/main/scripts/install.sh --output install.sh && chmod +x install.sh && ./install.sh
 ```
 
 ### Installation (docker) 
 
-To install and run the server using docker you can use the following script.( Warning, this script is still in BETA)
+To install and run the server using docker you can use the following script.
 
 ```
-git clone https://github.com/quentintaranpino/nostrcheck-api-ts.git && cd nostrcheck-api-ts && git switch 0.5.0 && sudo docker-compose up -d --build
+git clone https://github.com/quentintaranpino/nostrcheck-api-ts.git && cd nostrcheck-api-ts && sudo docker-compose up -d --build
 
 ```
+
+
+https://github.com/quentintaranpino/nostrcheck-api-ts/assets/125748180/dff0933a-0325-4c0b-bad5-5e2702337ea0
+
+
 
 ## Documentation
 
-See documentation [here](https://github.com/quentintaranpino/nostrcheck-api-ts/blob/0.5.0/DOCS.md)
+See documentation [here](https://github.com/quentintaranpino/nostrcheck-api-ts/blob/main/DOCS.md)
+
+## Configuration
+
+See configuration [here](https://github.com/quentintaranpino/nostrcheck-api-ts/blob/main/CONFIG.md)
 
 ## Screenshots
 ### Dashboard
@@ -68,9 +80,28 @@ See documentation [here](https://github.com/quentintaranpino/nostrcheck-api-ts/b
 - [x] NIP96
 - [x] NIP98
 
+## Roadmap
 
-## Powered by
-![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white) ![NodeJS](https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white) ![MariaDB](https://img.shields.io/badge/MariaDB-003545?style=for-the-badge&logo=mariadb&logoColor=white) ![Redis](https://img.shields.io/badge/redis-%23DD0031.svg?style=for-the-badge&logo=redis&logoColor=white) ![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white) ![Nginx](https://img.shields.io/badge/nginx-%23009639.svg?style=for-the-badge&logo=nginx&logoColor=white) ![Ffmpeg](https://img.shields.io/badge/ffmpeg-74aa9c?style=for-the-badge&logo=ffmpeg&logoColor=white&logoWidth=25) ![nostr-tools](https://img.shields.io/badge/nostr%7Ctools-9932cc?style=for-the-badge&logo=toml&logoColor=white)
+- [x] Nostraddress service
+- [x] Media uploads
+- [x] Lightning redirects
+- [x] Standalone Installation script
+- [x] Docker installation
+- [x] Nostr DM integration
+- [x] Frontend UI (dashboard)
+- [x] Frontend UI (settings)
+- [x] Frontend UI (homepage)
+- [x] Frontend UI (docs and ToS)
+- [ ] Enable lightning payments
+- [ ] Import / Export data
+- [ ] Custom frontend templates
+- [ ] Frontend UI (profile)
+- [ ] Frontend UI (public gallery)
+- [ ] Frontend UI (directory)
+- [ ] Frontend UI (register)
+- [ ] Umbrel appstore integration
+- [ ] Start9 appstore integration
+- [ ] Integrated micro-relay
 
 ## License
 

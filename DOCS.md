@@ -1,178 +1,834 @@
-## Available endpoints
+# Documentation
 
+## Admin
 
-### status [GET]
-Returns the status of the server
+### resetpassword [POST]
+This method generates a new password for a user. The request must include a valid pubkey and an Authorization header with a valid authkey. On success, it returns a message indicating that the new password was generated, along with an authkey.
 
-https://nostrcheck.me/api/v2/status
+Endpoint: https://nostrcheck.me/api/v2/admin/resetpassword
 
-**Example**
+**Headers**
 
-``` 
+- `Content-Type`: application/json
+- `Authorization`: Bearer {authkey}
+
+**Parameters**
+
+- `pubkey`: The public key of the user.
+
+**Example Request**
+
+```json
 {
-    "result": true,
-    "description": "Nostrcheck API server is running.",
-    "version": "0.3.3",
-    "uptime": "20:03:34"
+    "method": "POST",
+    "url": "https://nostrcheck.me/api/v2/admin/resetpassword",
+    "headers": {
+        "Content-Type": "application/json",      
+	"Authorization": "Bearer Auth37f3352fe10584d7396f010eb501482930dd712f"
+    },
+    "body": {
+        "pubkey": "user_public_key"
+    }
 }
 ```
- 
-### domains [GET]
-Return available domains on the server
 
-https://nostrcheck.me/api/v1/domains
+**Example Response**
 
-This endpoint use the [NIP98](https://github.com/nostr-protocol/nips/blob/master/98.md) HTTP Auth for getting the available domains. The NIP98's pubkey must have the "allowed" field with "1" on registered database.
-
-**Example**
-```
+```json
 {
-	"domains": [
-		{
-			"domain": "nostrcheck.me"
-		},
-		{
-			"domain": "nostr-check.me"
-		},
-		{
-			"domain": "nostriches.club"
-		},
-		{
-			"domain": "plebchain.club"
-		}
-	]
+    "status": "success",
+    "message": "New password generated for user_key",
+    "authkey": "auth_key"
+}
+```
+
+### stop [POST]
+This method stops the server. The request must include a valid Authorization header with a valid authkey. On success, it returns a message indicating that the server is stopping, along with an authkey.
+
+Endpoint: https://nostrcheck.me/api/v2/admin/stop
+
+**Headers**
+
+- `Content-Type`: application/json
+- `Authorization`: Bearer {authkey}
+
+**Example Request**
+
+```json
+{
+    "method": "POST",
+    "url": "https://nostrcheck.me/api/v2/admin/stop",
+    "headers": {
+        "Content-Type": "application/json",      
+        "Authorization": "Bearer Auth37f3352fe10584d7396f010eb501482930dd712f"
+    }
+}
+```
+
+**Example Response**
+
+```json
+{
+    "status": "success",
+    "message": "Stopping server...",
+    "authkey": "auth_key"
+}
+```
+
+### status [GET]
+This method returns the status of the server. It does not require any parameters or an Authorization header.
+
+Endpoint: https://nostrcheck.me/api/v2/admin/status
+
+**Example Request**
+
+```json
+{
+    "method": "GET",
+    "url": "https://nostrcheck.me/api/v2/admin/status",
+    "headers": {
+        "Content-Type": "application/json"
+    }
+}
+```
+
+**Example Response**
+
+```json
+{
+    "status": "success",
+    "message": "Nostrcheck API server is running.",
+    "version": "0.5.0.1470",
+    "uptime": "01:45:04"
+}
+```
+
+### updaterecord [POST]
+This method updates a record in the database. The request must include a valid Authorization header with a valid authkey. The request body must include the table name, field name, new value, and the id of the record to be updated.
+
+Endpoint: https://nostrcheck.me/api/v2/admin/updaterecord
+
+**Headers**
+
+- `Content-Type`: application/json
+- `Authorization`: Bearer {authkey}
+
+**Body**
+
+- `table`: The name of the table in the database.
+- `field`: The name of the field to be updated.
+- `value`: The new value for the field.
+- `id`: The id of the record to be updated.
+
+**Example Request**
+
+```json
+{
+    "method": "POST",
+    "url": "https://nostrcheck.me/api/v2/admin/updaterecord",
+    "headers": {
+        "Content-Type": "application/json",
+   "Authorization": "Bearer Auth37f3352fe10584d7396f010eb501482930dd712f"
+    },
+    "body": {
+        "table": "registered",
+        "field": "username",
+        "value": "newUsername",
+        "id": "123"
+    }
+}
+```
+
+**Example Response**
+
+```json
+{
+    "status": "success",
+    "message": "newUsername",
+    "authkey": "auth_key"
+}
+```
+
+### deleterecord [POST]
+This method deletes a record in the database. The request must include a valid Authorization header with a valid authkey. The request body must include the table name and the id of the record to be deleted.
+
+Endpoint: https://nostrcheck.me/api/v2/admin/deleterecord
+
+**Headers**
+
+- `Content-Type`: application/json
+- `Authorization`: Bearer {authkey}
+
+**Body**
+
+- `table`: The name of the table in the database.
+- `id`: The id of the record to be deleted.
+
+**Example Request**
+
+```json
+{
+    "method": "POST",
+    "url": "https://nostrcheck.me/api/v2/admin/deleterecord",
+    "headers": {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer Auth37f3352fe10584d7396f010eb501482930dd712f"
+    },
+    "body": {
+        "table": "registered",
+        "id": 123
+    }
+}
+```
+
+**Example Response**
+
+```json
+{
+    "status": "success",
+    "message": "Record deleted succesfully",
+    "authkey": "auth_key"
+}
+```
+
+### insertrecord [POST]
+This method inserts a new record into a specified table in the database. The request must include a valid table name, a row object with field-value pairs, and an Authorization header with a valid authkey. On success, it returns a message indicating that the record was inserted, along with an authkey.
+
+Endpoint: https://nostrcheck.me/api/v2/admin/insertrecord
+
+**Headers**
+
+- `Content-Type`: application/json
+- `Authorization`: Bearer {authkey}
+
+**Parameters**
+
+- `table`: The name of the table where the record will be inserted.
+- `row`: An object containing field-value pairs to be inserted as a new record.
+
+**Example Request**
+
+```json
+{
+    "method": "POST",
+    "url": "https://nostrcheck.me/api/v2/admin/insertrecord",
+    "headers": {
+        "Content-Type": "application/json",      
+	"Authorization": "Bearer Auth37f3352fe10584d7396f010eb501482930dd712f"
+    },
+    "body": {
+        "table": "table_name",
+        "row": {
+            "field1": "value1",
+            "field2": "value2",
+            ...
+        }
+    }
+}
+```
+
+**Example Response**
+
+```json
+{
+    "status": "success",
+    "message": "Records inserted",
+    "authkey": "auth_key"
+}
+```
+
+### updatesettings [POST]
+This method updates the settings of a specified module in the application. The request must include a valid module name, a setting name, a new value for the setting, and an Authorization header with a valid authkey. On success, it returns a message indicating that the settings were updated, along with an authkey.
+
+Endpoint: https://nostrcheck.me/api/v2/admin/updatesettings
+
+**Headers**
+
+- `Content-Type`: application/json
+- `Authorization`: Bearer {authkey}
+
+**Parameters**
+
+- `name`: The name of the setting to be updated.
+- `value`: The new value for the setting.
+
+**Example Request**
+
+```json
+{
+    "method": "POST",
+    "url": "https://nostrcheck.me/api/v2/admin/updatesettings",
+    "headers": {
+        "Content-Type": "application/json",      
+	"Authorization": "Bearer Auth37f3352fe10584d7396f010eb501482930dd712f"
+    },
+    "body": {
+        "name": "setting_name",
+        "value": "new_value"
+    }
+}
+```
+
+**Example Response**
+
+```json
+{
+    "status": "success",
+    "message": "Succesfully updated settings.",
+    "authkey": "auth_key"
+}
+```
+### updatelogo [POST]
+This method updates the logo of the application. The request must include a valid module name, an Authorization header with a valid authkey, and a file with the new logo. If no file is provided, the default logo is restored. The logo is resized and converted to webp format before being saved. On success, it returns a message indicating that the logo was updated, along with an authkey.
+
+Endpoint: https://nostrcheck.me/api/v2/admin/updatelogo
+
+**Headers**
+
+- `Content-Type`: multipart/form-data
+- `Authorization`: Bearer {authkey}
+
+**Parameters**
+
+- `file`: The new logo file.
+
+**Example Request**
+
+```json
+{
+    "method": "POST",
+    "url": "https://nostrcheck.me/api/v2/admin/updatelogo",
+    "headers": {
+        "Content-Type": "multipart/form-data",
+	"Authorization "Bearer Auth37f3352fe10584d7396f010eb501482930dd712f"
+    },
+    "body": {
+        "file": "logo_file"
+    }
+}
+```
+
+**Example Response**
+
+```json
+{
+    "status": "success",
+    "message": "Logo updated",
+    "authkey": "auth_key"
+}
+```
+### Domains
+
+### domains [GET]
+This method retrieves a list of available domains in the application. The request must include a valid module name and an Authorization header with a valid authkey. On success, it returns a list of available domains and an authkey.
+
+This endpoint also can use the [NIP98](https://github.com/nostr-protocol/nips/blob/master/98.md) HTTP Auth for getting the user's authkey. The NIP98's pubkey must have the "allowed" field with "1" on registered database.
+
+Endpoint: https://nostrcheck.me/api/v2/domains
+
+**Headers**
+
+- `Content-Type`: application/json
+- `Authorization`: Bearer {authkey}
+
+**Example Request**
+
+With authkey
+```json
+{
+    "method": "GET",
+    "url": "https://nostrcheck.me/api/v2/domains/",
+    "headers": {
+        "Content-Type": "application/json",
+	"Authorization "Bearer Auth37f3352fe10584d7396f010eb501482930dd712f"
+    }
+}
+```
+
+With NIP98
+```json
+{
+    "method": "GET",
+    "url": "https://nostrcheck.me/api/v2/domains/",
+    "headers": {
+        "Content-Type": "application/json",
+	"Authorization "Nostr ewogICJpZCI6ICI5MzMxMDUyY2FlYzQzNTE4NDRlMzM4YTgyZDhmMGRhNzEzZmVkNDk1ODViN2ZjNTVkMDg5MWVlOWZiMDYyYTJjIiwKICAicHVia2V5IjogIjgyMDhmYWNkY2FiMjk4NzgyYzllM2I3YjllZmIyMmJjMjQ2ZDE1NzcwZTBiNGY5NmJiZTUxYzQwNjViODJhZjAiLAogICJjcmVhdGVkX2F0IjogMTcwOTExNDEwNywKICAia2luZCI6IDI3MjM1LAogICJ0YWdzIjogWwogICAgWwogICAgICAibWV0aG9kIiwKICAgICAgIkdFVCIKICAgIF0sCiAgICBbCiAgICAgICJ1IiwKICAgICAgImh0dHBzOi8vbm9zdHJjaGVjay5tZS9hcGkvdjIvZG9tYWlucyIKICAgIF0KICBdLAogICJjb250ZW50IjogIiIsCiAgInNpZyI6ICI3ZDYyMzk1OGZhMjY5ZTY2NzhlYmZlOGVhN2JlOTlhMzgxNDlhYTc2NTdmZjJlZTVlYmM0ODYyNWFlODY3M2Y4Yjk0ZDM2YWUxMTAyOGVhOWU0MzNjZWY3ZmZhNWEwZDcxYjIyYzI0OGMyNDA5M2NkNGFmMjBmYjVjM2Y5MGE0MiIKfQ"
+    }
+}
+```
+
+**Example Response**
+
+```json
+{
+    "AvailableDomains": ["domain1.com", "domain2.com"],
+    "authkey": "auth_key"
 }
 ```
 
 ### users [GET]
-Return available users from a domain registerd on the server
+This method retrieves a list of available users for a specific domain in the application. The request must include a valid module name, an Authorization header with a valid authkey, and a domain parameter in the URL. 
 
-https://nostrcheck.me/api/v1/domains/[domain]/users
+This endpoint also can use the [NIP98](https://github.com/nostr-protocol/nips/blob/master/98.md) HTTP Auth for getting the user's authkey. The NIP98's pubkey must have the "allowed" field with "1" on registered database.
 
-This endpoint use the [NIP98](https://github.com/nostr-protocol/nips/blob/master/98.md) HTTP Auth for getting the available users. The NIP98's pubkey must have the "allowed" field with "1" on registered database.
+Endpoint: https://nostrcheck.me/api/v2/domains/{domain}/users
 
-**Example**
+**Headers**
 
-https://nostrcheck.me/api/v1/domains/nostrcheck.me/users
+- `Content-Type`: application/json
+- `Authorization`: Bearer {authkey}
 
-```
+**Parameters**
+
+- `domain`: The domain for which to retrieve the list of available users.
+
+**Example Request**
+
+With authkey
+```json
 {
-	"nostrcheck.me": [
-		{
-			"username": "public",
-			"hex": "0a60549f014123c34157071943a7ddddf5663a92cf5040e15740305bf193b7a7"
-		},
-		{
-			"username": "quentin",
-			"hex": "2d02bb19d41d733ec94f6e81fe928c7c5dc3574d2f4e1ff1f24e1aa3eae69049"
-		}
-	]
+    "method": "GET",
+    "url": "https://nostrcheck.me/api/v2/domains/example.com/users",
+    "headers": {
+        "Content-Type": "/json",
+        "Authorization": "Bearer Auth37f3352fe10584d7396f010eb501482930dd712f"
+    }
 }
 ```
 
-### nostaddress [GET]
-Returns whether a user name is registered on the server.
-
-https://nostrcheck.me/api/v1/nostraddress
-
-**Example**
-
-[https://nostrcheck.me/api/v1/nostraddress?name=quentin](https://nostrcheck.me/api/v1/nostraddress?name=quentin)
-
-```
+With NIP98
+```json
 {
-names: {
-        quentin: "89e14be49ed0073da83b678279cd29ba5ad86cf000b6a3d1a4c3dc4aa4fdd02c"
-       }
+    "method": "GET",
+    "url": "https://nostrcheck.me/api/v2/domains/domain1.com/users",
+    "headers": {
+        "Content-Type": "application/json",
+        "Authorization": "Nostr ewogICJpZCI6ICI5MzMxMDUyY2FlYzQzNTE4NDRlMzM4YTgyZDhmMGRhNzEzZmVkNDk1ODViN2ZjNTVkMDg5MWVlOWZiMDYyYTJjIiwKICAicHVia2V5IjogIjgyMDhmYWNkY2FiMjk4NzgyYzllM2I3YjllZmIyMmJjMjQ2ZDE1NzcwZTBiNGY5NmJiZTUxYzQwNjViODJhZjAiLAogICJjcmVhdGVkX2F0IjogMTcwOTExNDEwNywKICAia2luZCI6IDI3MjM1LAogICJ0YWdzIjogWwogICAgWwogICAgICAibWV0aG9kIiwKICAgICAgIkdFVCIKICAgIF0sCiAgICBbCiAgICAgICJ1IiwKICAgICAgImh0dHBzOi8vbm9zdHJjaGVjay5tZS9hcGkvdjIvZG9tYWlucyIKICAgIF0KICBdLAogICJjb250ZW50IjogIiIsCiAgInNpZyI6ICI3ZDYyMzk1OGZhMjY5ZTY2NzhlYmZlOGVhN2JlOTlhMzgxNDlhYTc2NTdmZjJlZTVlYmM0ODYyNWFlODY3M2Y4Yjk0ZDM2YWUxMTAyOGVhOWU0MzNjZWY3ZmZhNWEwZDcxYjIyYzI0OGMyNDA5M2NkNGFmMjBmYjVjM2Y5MGE0MiIKfQ"
+    }
 }
 ```
 
-### lightning [GET]
-Returns the lightning redirect from a registered nostr address.
+**Example Response**
 
-https://nostrcheck.me/api/v1/lightningaddress
-
-**Example**
-
-[https://nostrcheck.me/api/v1/lightningaddress?name=quentin](https://nostrcheck.me/api/v1/lightningaddress?name=quentin)
-
-(Example response from walletofsatoshi server)
-
-```
+```json
 {
-callback: "https://livingroomofsatoshi.com/api/v1/lnurl/payreq/000000000-0000-0000-0000-000000000000",
-maxSendable: 100000000000,
-minSendable: 1000,
-metadata: "[["text/plain","Pay to Wallet of Satoshi user: perkynurse82"],["text/identifier","perkynurse82@walletofsatoshi.com"]]",
-commentAllowed: 32,
-tag: "payRequest",
-allowsNostr: true,
-nostrPubkey: "be1d89794bf92de5dd64c1e60f6a2c70c140abac9932418fee30c5c637fe9479"
+    "domain1.com": ["user1", "user2"],
+    "authkey": "auth_key"
 }
 ```
 
-### lightning [PUT]
-Allows to update or create a lightning address redirect for a pubkey
+### domain [PUT]
+This method updates the domain of a user in the application. The request must include a valid module name, an Authorization header with a valid authkey, and a domain parameter in the request URL. On success, it returns a success message.
 
-https://nostrcheck.me/api/v1/lightningaddress/
+This endpoint also can use the [NIP98](https://github.com/nostr-protocol/nips/blob/master/98.md) HTTP Auth for getting the user's authkey. The NIP98's pubkey must have the "allowed" field with "1" on registered database.
 
-**Example**
+Endpoint: https://nostrcheck.me/api/v2/domains/{domain}
 
-[https://nostrcheck.me/api/v1/lightningaddress/test@test.com]
+**Headers**
 
-This endpoint use the [NIP98](https://github.com/nostr-protocol/nips/blob/master/98.md) HTTP Auth for getting the pubkey. The NIP98's pubkey must be registered on the database.
+- `Content-Type`: application/json
+- `Authorization`: Bearer {authkey}
 
+**Parameters**
 
-Response from server:
-```
+- `domain`: The domain to be updated for the user.
+
+**Example Request**
+
+With authkey
+```json
 {
-	"result": true,
-	"description": "Lightning redirect for pubkey 89836015acd0c3e0227718fbe64b6251a8425cda33f27c3e4bbf794effbc7450 updated"
+    "method": "PUT",
+    "url": "https://nostrcheck.me/api/v2/domains/example.com",
+    "headers": {
+        "Content-Type": "application/json",
+	"Authorization": "Bearer Auth37f3352fe10584d7396f010eb501482930dd712f"
+    }
 }
 ```
 
-### lightning [DELETE]
-Allows to **delete** a lightning address redirect for a pubkey
-
-https://nostrcheck.me/api/v1/lightningaddress/
-
-**Example**
-
-[https://nostrcheck.me/api/v1/lightningaddress]
-
-This endpoint use the [NIP98](https://github.com/nostr-protocol/nips/blob/master/98.md) HTTP Auth for getting the pubkey. The NIP98's pubkey must be registered on the database.
-
-Response from server:
-``` 
+With NIP98
+```json
 {
-	"result": true,
-	"description": "Lightning deletion for id: 1 and pubkey 40ea82aa4a450ea86cbb185a81f810edf2ac9810262f8e5952521f95ddfd8d97 successful"
+    "method": "GET",
+    "url": "https://nostrcheck.me/api/v2/domains/domain1.com",
+    "headers": {
+        "Content-Type": "application/json",
+        "Authorization": "Nostr ewogICJpZCI6ICJlYjlkMWY2OWJhZDYwN2IyZDg5OTFhYjJmNTAxYzQwMGNkZTQ4MTk0YmZlMDg3NmI5ZWMzN2I4NjRlZDYwMmVmIiwKICAicHVia2V5IjogIjgyMDhmYWNkY2FiMjk4NzgyYzllM2I3YjllZmIyMmJjMjQ2ZDE1NzcwZTBiNGY5NmJiZTUxYzQwNjViODJhZjAiLAogICJjcmVhdGVkX2F0IjogMTcwOTExNDEwNywKICAia2luZCI6IDI3MjM1LAogICJ0YWdzIjogWwogICAgWwogICAgICAibWV0aG9kIiwKICAgICAgIlBVVCIKICAgIF0sCiAgICBbCiAgICAgICJ1IiwKICAgICAgImh0dHBzOi8vbm9zdHJjaGVjay5tZS9hcGkvdjIvZG9tYWlucyIKICAgIF0KICBdLAogICJjb250ZW50IjogIiIsCiAgInNpZyI6ICI5MjZlZGNhYThkNjllNTUyZTI4NDZlZWJlMjY3ZGMxMDQ3YWU3ZjJiMjc0NzU0ZjZlYWI4YWQwZTQxZDJmZGY1YzI2MDdmNTM3YmE3NTUxMmRkZWIzNWE2NWVlZDQxZjEzNDRiODE2YTlmMzgzZWUzYTJkZTljMTgzNWU3MjBjOCIKfQ=="
+    }
 }
 ```
 
+**Example Response**
+
+```json
+{
+    "status": "success",
+    "message": "User domain for pubkey Auth37f3352fe10584d7396f010eb501482930dd712f updated"
+}
+```
+
+## Frontend
+
+### api/v2 [GET]
+
+Loads the index page. If it's the first use, it shows an alert on the frontend.
+
+### api/v2/login [GET]
+
+Loads the login page. If the user is already logged in, it redirects to the current API version. If it's the first use, it sets the first use to true and redirects to the front page where an alert will be shown.
+
+### api/v2/login [POST]
+
+Handles the login request. The user can log in using either a public key or a username and password. If the user chooses to remember their login, the session cookie's max age is set to the value specified in the configuration.
+
+**Parameters**
+
+- `pubkey`: The user's public key (optional).
+- `username`: The user's username (optional).
+- `password`: The user's password (optional).
+- `rememberMe`: Whether to remember the user's login (optional).
+
+**Example Request**
+
+```json
+{
+    "username": "user123",
+    "password": "password123",
+    "rememberMe": "true"
+}
+```
+
+**Example Response**
+
+```json
+true
+```
+
+This response indicates that the login was successful. If the login fails, the response will be `false`.
+
+**Error Responses**
+
+- `400`: The frontend module is not enabled, or an attempt was made to access a secure session over HTTP.
+- `401`: No credentials were provided, or the provided credentials were invalid.
+- `500`: Failed to generate an authkey for the user.
+
+### api/v2/tos [GET]
+
+Loads the Terms of Service page. If it's the first use, it shows an alert on the frontend.
+
+### api/v2/documentation [GET]
+
+Loads the documentation page. If it's the first use, it shows an alert on the frontend.
+
+### api/v2/dashboard [GET]
+
+Loads the dashboard page. If the user is not logged in or the public key is not valid, it redirects to the login page or the current API version respectively.
+
+### api/v2/settings [GET]
+
+Loads the settings page. If the user is not logged in or the public key is not valid, it redirects to the login page or the current API version respectively.
+
+### api/v2/profile [GET]
+
+Loads the profile page. If the user is not logged in or the public key is not valid, it redirects to the login page or the current API version respectively.
+
+### api/v2/gallerydata [GET]
+
+Loads the gallery data for the logged-in user. The page number can be specified as a query parameter. If no page number is specified, the first page is returned. Each page contains 18 media files.
+
+**Parameters**
+
+- `page`: The page number (optional).
+
+**Example Response**
+
+```json
+{
+    "username": "user123",
+    "mediaFiles": [
+        {
+            "id": "file1",
+            "url": "https://example.com/media/file1.jpg",
+            "title": "File 1",
+            "description": "This is file 1",
+            "uploadDate": "2022-01-01T00:00:00Z"
+        },
+        {
+            "id": "file2",
+            "url": "https://example.com/media/file2.jpg",
+            "title": "File 2",
+            "description": "This is file 2",
+            "uploadDate": "2022-01-02T00:00:00Z"
+        },
+        // ... more media files ...
+    ]
+}
+```
+
+This response includes the username and an array of media files. Each media file object includes the file ID, URL, title, description, and upload date.
+
+### api/v2/logout [GET]
+
+Logs out the user and redirects to the login page. If there's an error during the session destruction, it redirects to the current API version.
 
 
+Note: All routes are rate-limited for security reasons. The limit varies depending on the route.
+
+# Lightning
+
+### lightningaddress [GET]
+
+This method redirects to a user's Lightning address in the application. The request must include a valid username in the query parameter or in the route parameters. On success, it returns the details of the user's Lightning address.
+
+Endpoint: https://nostrcheck.me/api/v2/lightningaddress/{name}
+
+**Parameters**
+
+- `name`: The username for which the Lightning address is being sought.
+
+**Example Request**
+
+```json
+{
+    "method": "GET",
+    "url": "https://nostrcheck.me/api/v2/lightningaddress/quentin"
+}
+```
+
+**Example Response**
+
+Returns the details of the user's Lightning address, for example:
+
+```json
+{
+    "callback": "https://livingroomofsatoshi.com/api/v1/lnurl/payreq/01cbf321-ed95-4d31-a0d0-64365e6d8ced",
+    "maxSendable": 100000000000,
+    "minSendable": 1000,
+    "metadata": "[[\"text/plain\",\"Pay to Wallet of Satoshi user: quentin\"],[\"text/identifier\",\"quentin@walletofsatoshi.com\"]]",
+    "commentAllowed": 255,
+    "tag": "payRequest",
+    "allowsNostr": true,
+    "nostrPubkey": "be1d89794bf92de5dd64c1e60f6a2c70c140abac9932418fee30c5c637fe9479"
+}
+```
+
+### lightningaddress [PUT]
+
+This method updates a user's Lightning address in the application. The request must include a valid `lightningaddress` in the route parameters and a valid authorization header. On success, it updates the user's Lightning address and returns a success message.
+
+This endpoint also can use the [NIP98](https://github.com/nostr-protocol/nips/blob/master/98.md) HTTP Auth for getting the user's authkey. 
+
+Endpoint: https://nostrcheck.me/api/v2/lightningaddress/{lightningaddress}
+
+**Parameters**
+
+- `lightningaddress`: The Lightning address that needs to be updated.
+
+**Headers**
+
+- `Content-Type`: Should be `application/json`.
+- `Authorization`: A valid authorization header. This can be a bearer token (authkey) or a NIP98 token.
+
+**Example Request with authkey**
+
+```json
+{
+    "method": "POST",
+    "url": "https://nostrcheck.me/api/v2/lightningaddress/username@example.com",
+    "headers": {
+        "Content-Type": "application/json",   
+ 	"Authorization": "Bearer Auth37f3352fe10584d7396f010eb501482930dd712f"
+    }
+}
+```
+
+**Example Request with NIP98**
+
+```json
+{
+    "method": "POST",
+    "url": "https://nostrcheck.me/api/v2/lightningaddress/username@example.com",
+    "headers": {
+        "Content-Type": "application/json",
+        "Authorization": "Nostr ewogICJpZCI6ICIyNzhmYmQ4ZjUyYTczNGIwMjFkNDlkN2MwMGFkMWIwM2Q3MjA2MmM2MTBmMDJhMmNiZDY4NTNkZGIwYTFmODlmIiwKICAicHVia2V5IjogImFjMjI4MThhYzQyMTBmOGY2NjZmZWI4NjJhYTE2MDZmOGJmN2Y5YzI1OTZlNTVkY2JjMjY1ZWI0NTRhY2FkYjAiLAogICJjcmVhdGVkX2F0IjogMTcwOTExNDEwNywKICAia2luZCI6IDI3MjM1LAogICJ0YWdzIjogWwogICAgWwogICAgICAibWV0aG9kIiwKICAgICAgIlBVVCIKICAgIF0sCiAgICBbCiAgICAgICJ1IiwKICAgICAgImh0dHBzOi8vbm9zdHJjaGVjay5tZS9hcGkvdjIvbGlnaHRuaW5nYWRkcmVzcyIKICAgIF0KICBdLAogICJjb250ZW50IjogIiIsCiAgInNpZyI6ICJkMDM5ZmFmMWExZTQyZjI4Y2EzMDQwNjIyZDg4ODg3NDk3NGUxMGRkZjAwZTAxNWIxNDM1ZGQ0NjVhZjA4OGQyYzJjYmRhYTNkYTYzOTk1ZDhjNWI5ZWMzM2Y0MWJhODMzM2I0OWVhYzI0YmUwZjFkMGIzMjA4MGQ5NjBiMTllYSIKfQ=="
+    }
+}
+```
+
+**Example Response**
+
+On success, a message is returned indicating the Lightning address has been updated:
+
+```json
+{
+    "status": "success",
+    "message": "Lightning redirect for pubkey {pubkey} updated"
+}
+```
+
+### lightningaddress [DELETE]
+
+This method deletes a user's Lightning address in the application. The request must include a valid `lightningaddress` in the route parameters and a valid authorization header. On success, it deletes the user's Lightning address and returns a success message.
+
+This endpoint also can use the [NIP98](https://github.com/nostr-protocol/nips/blob/master/98.md) HTTP Auth for getting the user's authkey. 
+
+Endpoint: https://nostrcheck.me/api/v2/lightningaddress
+
+**Parameters**
+
+- `lightningaddress`: The Lightning address that needs to be deleted.
+
+**Headers**
+
+- `Content-Type`: Should be `application/json`.
+- `Authorization`: A valid authorization header. This can be a bearer token (authkey) or a NIP98 token.
+
+**Example Request with authkey**
+
+```json
+{
+    "method": "DELETE",
+    "url": "https://nostrcheck.me/api/v2/lightningaddress",
+    "headers": {
+        "Content-Type": "application/json",   
+	"Authorization": "Bearer Auth37f3352fe10584d7396f010eb501482930dd712f"
+    }
+}
+```
+
+**Example Request with NIP98**
+
+```json
+{
+    "method": "DELETE",
+    "url": "https://nostrcheck.me/api/v2/lightningaddress/01cbf321-ed95-4d31-a0d0-64365e68ced",
+    "headers": {
+        "Content-Type": "application/json",
+        "Authorization": "Nostr ewogICJpZCI6ICIyNzhmYmQ4ZjUyYTczNGIwMjFkNDlkN2MwMGFkMWIwM2Q3MjA2MmM2MTBmMDJhMmNiZDY4NTNkZGIwYTFmODlmIiwKICAicHVia2V5IjogImFjMjI4MThhYzQyMTBmOGY2NjZmZWI4NjJhYTE2MDZmOGJmN2Y5YzI1OTZlNTVkY2JjMjY1ZWI0NTRhY2FkYjAiLAogICJjcmVhdGVkX2F0IjogMTcwOTExNDEwNywKICAia2luZCI6IDI3MjM1LAogICJ0YWdzIjogWwogICAgWwogICAgICAibWV0aG9kIiwKICAgICAgIkRFTEVURSIKICAgIF0sCiAgICBbCiAgICAgICJ1IiwKICAgICAgImh0dHBzOi8vbm9zdHJjaGVjay5tZS9hcGkvdjIvbGlnaHRuaW5nYWRkcmVzcyIKICAgIF0KICBdLAogICJjb250ZW50IjogIiIsCiAgInNpZyI"
+	}
+}
+```
+Example Response
+
+On success, a message is returned indicating the Lightning address has been deleted:
+
+```json
+{
+    "status": "success",
+    "message": "Lightning redirect for pubkey {pubkey} deleted"
+}
+```
+
+# Media
 
 ### media [POST]
-Allows to upload files
 
-https://nostrcheck.me/api/v2/media
+This endpoint allows for file uploads. The request must include a valid module name and a valid Authorization header.
 
-This endpoint requires the following fields in the body:
+Endpoint: https://nostrcheck.me/api/v2/media
 
+**Body Parameters**
+
+- `uploadtype`: Optional. Can be one of the following: `media`, `avatar`, `banner`. If not specified, the server will interpret it as "media" (standard upload).
+- `[attached file]`: The file to be uploaded.
+
+This endpoint uses the [NIP98](https://github.com/nostr-protocol/nips/blob/master/98.md) HTTP Auth and gets the `pubkey` field from the auth note. 
+
+It also uses the [NIP96](https://github.com/nostr-protocol/nips/blob/96.md) HTTP File Storage Integration standard. 
+
+The upload will be saved in the user's gallery, whether registered or not.
+
+**Example Request**
+
+```json
+{
+    "method": "POST",
+    "url": "https://nostrcheck.me/api/v2/media",
+    "headers": {
+        "Content-Type":"multipart/form-data",
+        "Authorization": "Bearer Auth37f3352fe10584d7396f010eb501482930dd712f"
+    },
+    "body": {
+        "uploadtype": "media",
+        "file": "[attached file]"
+    }
+}
 ```
-uploadtype: [media, avatar, banner] (Optional)
-[attached file] 
-```
-if the uploadtype is not specified, the server will always interpret it as " media" (standard upload).
 
-This endpoint use the [NIP98](https://github.com/nostr-protocol/nips/blob/master/98.md) HTTP Auth and get this fields from auth note.
-This endpoint use the [NIP96](https://github.com/nostr-protocol/nips/blob/96.md) HTTP File Storage Integration standard.
+**Example Request with NIP98**
 
+```json
+{
+    "method": "POST",
+    "url": "https://nostrcheck.me/api/v2/media",
+    "headers": {
+        "Content-Type": "multipart/form-data",
+        "Authorization": "Nostr ewogICJpZCI6ICJmOTNkMzg4MGNhM2U1NjYyZWM5MjhhZGEzYjFiMmY3MjlhOGRlNjk1MjJlODJlODQ0YTE2MzE0MDM5YmVhNzI3IiwKICAicHVia2V5IjogIjVjNTM0MDI4Y2QzNWNkNzg4YTFiNWU4OGQ0M2MxZTQxMzYwNDk3ZDM4MWIwZTUyNzUyNjUwNDQyZjkyYjczYTAiLAogICJjcmVhdGVkX2F0IjogMTY4MjMyNzg1MiwKICAia2luZCI6IDI3MjM1LAogICJ0YWdzIjogWwogICAgWwogICAgICAidSIsCiAgICAgICJodHRwczovbm9zdHJjaGVjay5tZS9hcGkvdjIvbWVkaWEiCiAgICBdLAogICAgWwogICAgICAibWV0aG9kIiwKICAgICAgIlBPU1QiCiAgICBdCiAgXSwKICAiY29udGVudCI6ICIiLAogICJzaWciOiAiZTIwOTcxNjQ5MDEwMjE5ZjdhMDFkNTc1NDVmNTJlZTVjZjIzOTMzMWM3NTA2ZGI3ZjYxOTc5OTUzOTJjMjZiYzQ4ZjYzYzBlYzNmM2I1ZjRmNmI3NzFhZGEzYzAwOThkN2RjNDFjM2ViNjJlYzcxODVjNTRmMzlkODlmNTI1YjkiCn0"
+    },
+    "body": {
+        "uploadtype": "media",
+        "file": "[attached file]"
+    }
+}
 ```
-pubkey
+
+**Example Response**
+
+```json
+{
+    "status": "success",
+    "message": "",
+    "processing_url": "https://nostrcheck.me.com/api/v2/media/3225",
+    "nip94_event": {
+        "id": "",
+        "pubkey": "62c76eb094369d938f5895442eef7f53ebbf019f69707d64e77d4d182b609309",
+        "created_at": 1710328339,
+        "kind": 1063,
+        "tags": [
+            [
+                "url",
+                "https://nostrcheck.me/media/62c76eb094369d938f5895442eef7f53ebbf019f69707d64e77d4d182b609309/c35277dbcedebb0e3b80361762c8baadb66dcdfb6396949e50630159a472c3b2.webp"
+            ],
+            [
+                "m",
+                "image/webp"
+            ],
+            [
+                "x",
+                ""
+            ],
+            [
+                "ox",
+                "c35277dbcedebb0e3b80361762c8baadb66dcdfb6396949e50630159a472c3b2"
+            ],
+            [
+                "size",
+                "31356"
+            ],
+            [
+                "dim",
+                "1280x960"
+            ],
+            [
+                "magnet",
+                ""
+            ],
+            [
+                "i",
+                ""
+            ],
+            [
+                "blurhash",
+                "UI5Gw}UcX8knqFU{kCoyW@axoeflajockAa#"
+            ]
+        ],
+        "content": "",
+        "sig": ""
+    }
+}
 ```
-If the pubkey is registered, the upload will be saved in the user's gallery, otherwise the upload will be public (with the public parametrized pubkey), 
+
 
 
 ### media [GET] (ID) 
@@ -181,6 +837,7 @@ Allows to get the status and information about a file
 https://nostrcheck.me/api/v2/media
 
 This endpoint use the [NIP98](https://github.com/nostr-protocol/nips/blob/master/98.md) HTTP Auth for getting the media status. The NIP98's pubkey must be the same as the one who uploaded the file. 
+
 This endpoint use the [NIP96](https://github.com/nostr-protocol/nips/blob/96.md) HTTP File Storage Integration standard.
 
 **Example**
@@ -200,7 +857,7 @@ http://localhost:3000/api/v2/media/7
 		"tags": [
 			[
 				"url",
-				"http://localhost:3000/media/public/61b08dd1809b459e16d917bfae87c7b11acf0f4f2061334a567b3976de73c388.webp"
+				"http://localhost:3000/media/375fdc8cb766664da915d638f46ca0399cd13cbd81a3f25eb37371d9dbe1bc81/61b08dd1809b459e16d917bfae87c7b11acf0f4f2061334a567b3976de73c388.webp"
 			],
 			[
 				"m",
@@ -264,13 +921,13 @@ If the mediafile is not found the server return the image defined on config file
 ### media [GET] (TAGS)
 Allows to get the tags of a file.
 
-https://nostrcheck.me/api/v1/media/[id]/tags
+https://nostrcheck.me/api/v2/media/[id]/tags
 
 This endpoint use the [NIP98](https://github.com/nostr-protocol/nips/blob/master/98.md) HTTP Auth for getting the media status. The NIP98's pubkey must be the same as the one who uploaded the file. 
 
 **Example**
 
-http://localhost:3000/api/v1/media/7/tags
+http://localhost:3000/api/v2/media/7/tags
 
 ```
 [
@@ -290,13 +947,13 @@ http://localhost:3000/api/v1/media/7/tags
 ### media [GET] (FILES BY TAG)
 Allows to get the tags of a file.
 
-https://nostrcheck.me/api/v1/media/tags/[TAG]
+https://nostrcheck.me/api/v2/media/tags/[TAG]
 
 This endpoint use the [NIP98](https://github.com/nostr-protocol/nips/blob/master/98.md) HTTP Auth for getting the media status. The NIP98's pubkey must be the same as the one who uploaded the file. 
 
 **Example**
 
-http://localhost:3000/api/v1/media/tags/hodl
+http://localhost:3000/api/v2/media/tags/hodl
 
 ```
 {
@@ -325,7 +982,7 @@ http://localhost:3000/api/v1/media/tags/hodl
 ### media [PUT] (Visibility)
 Allows to change the visibility of a file. If the file is private it will not show on the gallery, but always will be accessible by the url.
 
-https://nostrcheck.me/api/v1/media/[id]/visibility/[visibility]
+https://nostrcheck.me/api/v2/media/[id]/visibility/[visibility]
 
 This endpoint use the [NIP98](https://github.com/nostr-protocol/nips/blob/master/98.md) HTTP Auth for getting the media status. The NIP98's pubkey must be the same as the one who uploaded the file. 
 
@@ -338,12 +995,12 @@ Visibility options:
 
 **Example**
 
-http://localhost:3000/api/v1/media/7/visibility/1
+http://localhost:3000/api/v2/media/7/visibility/1
 
 ```
 {
-    "result": true,
-    "description": "Media visibility has changed",
+    "status": "success",
+    "message": "Media visibility has changed",
     "id": "60",
     "visibility": "1"
 }
@@ -351,6 +1008,7 @@ http://localhost:3000/api/v1/media/7/visibility/1
 ```
 
 ### Media [DELETE]
+
 Allows to **delete** a mediafile from database and disk.
 
 This endpoint delete all files with the same hash of selected file.
@@ -368,8 +1026,8 @@ This endpoint use the [NIP96](https://github.com/nostr-protocol/nips/blob/96.md)
 Response from server:
 ```
 {
-	"result": true,
-	"description": "Mediafile deletion for id: 82 and pubkey 40ea82aa4a450ea86cbb185a81f810edf2ac9810262f8e5952521f95ddfd8d97 successful"
+	"status": "success",
+	"message": "Mediafile deletion for id: 82 and pubkey 40ea82aa4a450ea86cbb185a81f810edf2ac9810262f8e5952521f95ddfd8d97 successful"
 }
 
 ```
@@ -381,11 +1039,11 @@ https://nostrcheck.me/api/v2/nip96
 
 **Example**
 
-[https://nostrcheck.me/api/v1/nip96](https://nostrcheck.me/api/v1/nip96)
+[https://nostrcheck.me/api/v1/nip96](https://nostrcheck.me/api/v2/nip96)
 
 ```
 {
-api_url: "https://nostrcheck.me/api/v1/media",
+api_url: "https://nostrcheck.me/api/v2/media",
 download_url: "https://nostrcheck.me/media",
 supported_nips: [
 "NIP-94",
@@ -411,10 +1069,31 @@ content_types: [
 }
 ```
 
+# nostraddress
+
+### nostraddress [GET]
+Returns whether a user name is registered on the server.
+
+https://nostrcheck.me/api/v2/nostraddress
+
+**Example**
+
+[https://nostrcheck.me/api/v2/nostraddress?name=quentin](https://nostrcheck.me/api/v2/nostraddress?name=quentin)
+
+```
+{
+names: {
+        quentin: "89e14be49ed0073da83b678279cd29ba5ad86cf000b6a3d1a4c3dc4aa4fdd02c"
+       }
+}
+```
+
+# register
+
 ### register [POST]
 Allows to register a new username to the database
 
-https://nostrcheck.me/api/v1/register
+https://nostrcheck.me/api/v2/register
 
 Example of a register note for a new username
 ```
@@ -440,11 +1119,12 @@ Example of a register note for a new username
 
 This endpoint use the [NIP98](https://github.com/nostr-protocol/nips/blob/master/98.md) HTTP Auth for register new user authorization. The NIP98's pubkey must have the "allowed" field with "1" on registered database.
 
+# verify
 
 ### verify [POST]
 Endpoint to verify a nostr note integrity and signature.
 
-https://nostrcheck.me/api/v1/verify
+https://nostrcheck.me/api/v2/verify
 
 **Example**
 
@@ -470,32 +1150,7 @@ The server returns:
 }
 ```
 
-### stop [POST]
-Endpoint to stop the server remotely. This endpoint use the an Authorization api token.
-
-Type: Api key
-
-KEY: authorization
-
-VALUE: database password. (You can found it at local.json file)
-
-https://nostrcheck.me/api/v2/admin/stop
-
-**Example**
-Whithout authorization key:
-```
-{
-	"message": "Unauthorized"
-}
-```
-Whit authorization key:
-```
-{
-	"message": "Stopping server..."
-}
-```
-
-## Running, developing and building the app
+# Running, developing and building the app
 
 ```
 # install dependencies
@@ -517,7 +1172,7 @@ npm run start
 
 ## Loglevel
 
-You can define your preferred log level in the configuration file. Default loglevel is set to 4 (Warning messages)
+You can define your preferred log level in the configuration file. Default loglevel is set to 5 (Error messages)
 
 ```
 
@@ -552,28 +1207,13 @@ npm run lint:fix
 The server don't verify NIP98 integrity and authorization when is running on development mode.
 
 ```
-#edit config file
-sudo nano config/default.json
+# Edit config file
+sudo nano config/local.json
 
-#Set 'environment' to 'development'
+# Set 'environment' to 'development'
 "environment" : "development", 
 
-#Set 'environment' to 'production'
+# Set 'environment' to 'production'
 "environment" : "production", 
  
 ```
-
-## License
-
-MIT License (MIT)
-
-```
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-```
-
-

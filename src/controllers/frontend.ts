@@ -3,7 +3,7 @@ import fs from "fs";
 import config from "config";
 import app from "../app.js";
 import { logger } from "../lib/logger.js";
-import { getClientIp, markdownToHtml } from "../lib/server.js";
+import { getClientIp, markdownToHtml } from "../lib/utils.js";
 import { dbSelect, dbSelectModuleData} from "../lib/database.js";
 import { generateCredentials, isPubkeyValid, isUserPasswordValid } from "../lib/authorization.js";
 import { registeredTableFields } from "../interfaces/database.js";
@@ -56,6 +56,7 @@ const loadSettingsPage = async (req: Request, res: Response, version:string): Pr
     req.body.version = app.get("version");
     req.body.serverHost = app.get("config.server")["host"];
     req.body.availableModules = app.get("config.server")["availableModules"];
+    req.body.settingsEnvironment = app.get("config.environment");
     req.body.settingsServerHost = app.get("config.server")["host"];
     req.body.settingServerPubkey = app.get("config.server")["pubkey"];
     req.body.settingServerSecretkey =  app.get("config.server")["secretKey"];
@@ -221,6 +222,12 @@ const frontendLogin = async (req: Request, res: Response): Promise<Response> => 
 	}
 
     logger.info("POST /api/v2/login", "|", getClientIp(req));
+
+    // Check if secureCookie is true and if the request is not secure
+    if (req.session.cookie.secure && !req.secure) {
+        logger.warn("Attempt to access a secure session over HTTP:","|","IP:", getClientIp(req));
+        return res.status(400).send(false);
+    }
 
     if ((req.body.pubkey === "" || req.body.pubkey == undefined) && (req.body.username === '' || req.body.password === '')){
         logger.warn("RES -> 401 unauthorized  - ", getClientIp(req));

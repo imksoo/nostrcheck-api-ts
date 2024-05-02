@@ -6,7 +6,7 @@ import sharp from "sharp";
 import app from "../app.js";
 
 import { logger } from "../lib/logger.js";
-import { getClientIp, format } from "../lib/server.js";
+import { getClientIp, format } from "../lib/utils.js";
 import { ResultMessagev2, ServerStatusMessage, authkeyResultMessage } from "../interfaces/server.js";
 import { generateCredentials } from "../lib/authorization.js";
 import { dbDelete, dbInsert, dbUpdate } from "../lib/database.js";
@@ -547,24 +547,25 @@ const updateSettings = async (req: Request, res: Response): Promise<Response> =>
         return res.status(500).send(result);
     }
 
-    let parts = req.body.name.split(".");
-    let mainConfigName = `config.${parts.shift()}`;
-    let configField = parts.pop();
+    let parts = req.body.name.includes('.') ? req.body.name.split('.') : [req.body.name];
+    let mainConfigName = req.body.name.includes('.') ? `config.${parts.shift()}` : `config.${req.body.name}`;
+    let configField = parts.length > 0 ? parts.pop() : req.body.name;
     let rootConfig = JSON.parse(JSON.stringify(app.get(mainConfigName))); // Deep copy
     let currentConfig = rootConfig;
+    
     for (let part of parts) {
         if (currentConfig[part] === undefined) {
             return res.status(500).send({"status":"error", "message":`Config field not found: ${part}`});
         }
         currentConfig = currentConfig[part];
     }
-    if (currentConfig[configField] === undefined) {
-        return res.status(500).send({"status":"error", "message":`Config field not found: ${configField}`});
-    }
     
-    currentConfig[configField] = req.body.value;
-    app.set(mainConfigName, rootConfig);
-
+    if (typeof currentConfig === 'object') {
+        currentConfig[configField] = req.body.value;
+        app.set(mainConfigName, rootConfig);
+    } else {
+        app.set(mainConfigName, req.body.value);
+    }
 
     // If the setting is expireTime from redis we flush redis cache
     if (req.body.name == "redis.expireTime") {

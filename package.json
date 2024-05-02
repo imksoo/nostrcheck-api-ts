@@ -1,12 +1,12 @@
 {
   "name": "nostrcheck-api-ts",
-  "version": "0.5.0.1467",
+  "version": "0.5.0.1472",
   "description": "",
   "exports": "./index.js",
   "type": "module",
   "scripts": {
-    "start": "node --enable-source-maps --experimental-specifier-resolution=node --no-warnings --loader ts-node/esm ./dist/server.js",
-    "dev": "nodemon --exec node --loader ts-node/esm src/server.ts",
+    "start": "node --enable-source-maps --experimental-specifier-resolution=node --no-warnings --loader ts-node/esm ./dist/init.js",
+    "dev": "nodemon --exec node --loader ts-node/esm src/init.ts",
     "build": "tsc",
     "package": "node update-version.js && tsc",
     "lint": "eslint --ignore-path .gitignore . --ext .ts",
@@ -36,7 +36,6 @@
     "vitest": "^1.0.1"
   },
   "dependencies": {
-    "@types/redis": "^4.0.11",
     "bcrypt": "^5.1.1",
     "blurhash": "^2.0.5",
     "config": "3.3.9",

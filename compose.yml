@@ -9,8 +9,6 @@ services:
     depends_on:
       - mariadb
       - redis
-    ports:
-      - "3000:3000"
     volumes:
       - ./config:/usr/src/app/config
       - ./tmp:/usr/src/app/tmp
@@ -22,6 +20,10 @@ services:
       DATABASE_USER: "nostrcheck"
       DATABASE_PASSWORD: "nostrcheck"
       DATABASE_DATABASE: "nostrcheck"
+      REDIS_HOST: "redis"
+      REDIS_PORT: "6379"
+      REDIS_USER: "default"
+      REDIS_PASSWORD: ""
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.app.loadbalancer.server.port=3000"
@@ -44,13 +46,13 @@ services:
       - "traefik.http.middlewares.replacepathregex-media.replacepathregex.regex=^/media/(.*)"
       - "traefik.http.middlewares.replacepathregex-media.replacepathregex.replacement=/api/v2/media/$$1"
       - "traefik.http.routers.app-media.service=app"
-      # /.well-known/nostr.json -> /api/v2/nostraddress
+      # 
       - "traefik.http.routers.app.rule=PathPrefix(`/`)"
       - "traefik.http.routers.app.service=app"
-      # /.well-known/nostr.json -> /api/v2/lightning
-      - "traefik.http.routers.app-lightning.rule=Path(`/.well-known/lnurlp`)"
+      # /.well-known/lnurlp -> /api/v2/lightning
+      - "traefik.http.routers.app-lightning.rule=Path(`/.well-known/lnurlp/`)"
       - "traefik.http.routers.app-lightning.middlewares=replacepath-lightning"
-      - "traefik.http.middlewares.replacepath-lightning.replacepath.path=/api/v2/lightningaddress"
+      - "traefik.http.middlewares.replacepath-lightning.replacepath.path=/api/v2/lightningaddress/"
       - "traefik.http.routers.app-lightning.service=app"
     command: "npm run start"
   mariadb:
@@ -82,11 +84,9 @@ services:
       - localnet
     image: traefik:2.10
     command:
-      - "--api.insecure=true"
       - "--providers.docker=true"
-      - "--entrypoints.web.address=:80"
       - "--providers.docker.exposedbydefault=false"
-      - "--api.dashboard=true" 
+      - "--entrypoints.web.address=:3000"
     ports:
       - "80:80"
       - "8081:8080"
